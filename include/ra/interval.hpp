@@ -15,43 +15,6 @@ struct indeterminate_result : public std::runtime_error
 
 template <class T>
 class interval{
-    private:
-    real_type lower_bound;
-    real_type upper_bound;
-
-    static statistics stats_;
-    
-    
-    real_type get_min(const real_type * mins)
-    {
-      auto min = mins[0];
-
-      for(int i = 1; i < 4; ++i)
-      {
-        auto elem = mins[i];
-        if(elem < min)
-        {
-          min = elem;
-        }
-      }
-      return min;
-    }
-
-    real_type get_max(const real_type * maxs)
-    {
-      auto max = maxs[0];
-
-      for(int i = 1; i < 4; ++i)
-      {
-        auto elem = maxs[i];
-        if(elem > max)
-        {
-          max = elem;
-        }
-      }
-      return max;
-    }
-    
   public:
     using real_type = T;
 
@@ -62,7 +25,8 @@ class interval{
       unsigned long arithmetic_op_count ;
     };
 
-
+    static statistics stats_;
+  
     interval(real_type real_val = real_type(0)) : lower_bound(real_val), upper_bound(real_val) { }
 
     interval(interval&&) = default;
@@ -157,6 +121,40 @@ class interval{
     {
       stats.indeterminate_result_count = stats_.indeterminate_result_count;
       stats.arithmetic_op_count = stats_.arithmetic_op_count;
+    }
+
+  private:
+    real_type lower_bound;
+    real_type upper_bound;
+    
+    real_type get_min(const real_type * mins)
+    {
+      auto min = mins[0];
+
+      for(int i = 1; i < 4; ++i)
+      {
+        auto elem = mins[i];
+        if(elem < min)
+        {
+          min = elem;
+        }
+      }
+      return min;
+    }
+
+    real_type get_max(const real_type * maxs)
+    {
+      auto max = maxs[0];
+
+      for(int i = 1; i < 4; ++i)
+      {
+        auto elem = maxs[i];
+        if(elem > max)
+        {
+          max = elem;
+        }
+      }
+      return max;
     }
 };
 
