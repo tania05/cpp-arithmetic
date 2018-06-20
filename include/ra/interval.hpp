@@ -14,24 +14,24 @@ struct indeterminate_result : public std::runtime_error
   using std::runtime_error::runtime_error;
 };
 
-struct statistics {
-	// The total number of indeterminate results encountered.
-	unsigned long indeterminate_result_count;
-	// The total number of interval arithmetic operations.
-	unsigned long arithmetic_op_count;
-};
+// struct statistics {
+// 	// The total number of indeterminate results encountered.
+// 	unsigned long indeterminate_result_count;
+// 	// The total number of interval arithmetic operations.
+// 	unsigned long arithmetic_op_count;
+// };
 
 template <class T>
 class interval{
   public:
     using real_type = T;
 
-    // struct statistics {
-    //   // The total number of indeterminate results encountered.
-    //   unsigned long indeterminate_result_count ;
-    //   // The total number of interval arithmetic operations.
-    //   unsigned long arithmetic_op_count ;
-    // };
+    struct statistics {
+      // The total number of indeterminate results encountered.
+      unsigned long indeterminate_result_count ;
+      // The total number of interval arithmetic operations.
+      unsigned long arithmetic_op_count ;
+    };
 
 
     interval(real_type real_val = real_type(0)) : lower_bound(real_val), upper_bound(real_val) { }
@@ -55,19 +55,21 @@ class interval{
     ~interval() = default;
 
     interval& operator+=(const interval& other)
-    {
+    { 
       lower_bound = lower_bound + other.lower_bound;
       upper_bound = upper_bound + other.upper_bound;
-      ++stats_.arithmetic_op_count;
+      // ++stats_.arithmetic_op_count;
       return *this;
     }
 
     //TODO
+    //remember to check what happens if we operate on itself
     interval& operator-=(const interval& other)
     {
+      auto tmp = other.lower_bound;
       lower_bound = lower_bound - other.upper_bound;
-      upper_bound = upper_bound - other.lower_bound;
-      ++stats_.arithmetic_op_count;
+      upper_bound = upper_bound - tmp;
+      // ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -78,7 +80,7 @@ class interval{
       const real_type arr [] = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};      
       lower_bound = get_min(arr);
       upper_bound = get_max(arr);
-      ++stats_.arithmetic_op_count;
+      // ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -113,7 +115,7 @@ class interval{
       }
       else
       {
-        ++stats_.indeterminate_result_count;
+        // ++stats_.indeterminate_result_count;
         throw indeterminate_result("Could not determine the sign");
       }
     }
@@ -167,8 +169,8 @@ class interval{
     }
 };
 
-  template<typename T>
-  statistics interval<T>::stats_;
+  // template<typename T>
+  // statistics interval<T>::stats_;
 
   template<typename T>
   interval<T> operator+(const interval<T>& a, const interval<T>& b)
@@ -198,7 +200,7 @@ class interval{
   
   //less than
   template<typename T>
-  interval<T> operator<(const interval<T>&a, const interval<T>& b)
+  bool operator<(const interval<T>&a, const interval<T>& b)
   {
     if (a.lower() < b.lower() && a.upper() < b.upper())
     {
