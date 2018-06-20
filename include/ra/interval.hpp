@@ -106,7 +106,7 @@ class interval{
       else
       {
         ++stats_.indeterminate_result_count;
-        throw indeterminate_result();
+        throw (indeterminate_result);
       }
     }
 
@@ -198,7 +198,7 @@ class interval{
     }
     else
     {
-      throw indeterminate_result();
+      throw (indeterminate_result);
     }
   }
 
