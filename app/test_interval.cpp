@@ -48,6 +48,7 @@ void constructor_tests()
   assert(t4.lower() == (T)-6.7);
   assert(t4.upper() == (T)-3.5);
 
+
   //move constructor
   interval<T> c2(std::move(c1));
   assert(c1.lower() == (T)-6.7);

@@ -58,7 +58,7 @@ class interval{
     { 
       lower_bound = lower_bound + other.lower_bound;
       upper_bound = upper_bound + other.upper_bound;
-      // ++stats_.arithmetic_op_count;
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -69,7 +69,7 @@ class interval{
       auto tmp = other.lower_bound;
       lower_bound = lower_bound - other.upper_bound;
       upper_bound = upper_bound - tmp;
-      // ++stats_.arithmetic_op_count;
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -80,7 +80,7 @@ class interval{
       const real_type arr [] = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};      
       lower_bound = get_min(arr);
       upper_bound = get_max(arr);
-      // ++stats_.arithmetic_op_count;
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -115,7 +115,7 @@ class interval{
       }
       else
       {
-        // ++stats_.indeterminate_result_count;
+        ++stats_.indeterminate_result_count;
         throw indeterminate_result("Could not determine the sign");
       }
     }
@@ -169,8 +169,8 @@ class interval{
     }
 };
 
-  // template<typename T>
-  // statistics interval<T>::stats_;
+  template<typename T>
+  typename interval<T>::statistics interval<T>::stats_ = {0,0};
 
   template<typename T>
   interval<T> operator+(const interval<T>& a, const interval<T>& b)
