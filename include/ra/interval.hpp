@@ -32,7 +32,7 @@ class interval{
     interval& operator=(interval&&) = default;
 
     interval(const interval&) = default;
-    interval& operator=(interval&) = default;
+    interval& operator=(const interval&) = default;
 
     interval(real_type lower_, real_type upper_ ) : lower_bound(lower_), upper_bound(upper_) 
     { 
