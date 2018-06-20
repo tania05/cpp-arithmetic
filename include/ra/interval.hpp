@@ -128,7 +128,7 @@ class interval{
     real_type lower_bound;
     real_type upper_bound;
 
-    static statistics stats_;
+    static statistics stats_ = {0,0};
     
     real_type get_min(const real_type * mins)
     {
