@@ -22,6 +22,5 @@ int main()
     std::cout << "Test with float" << std::endl;
     do_test<float>();
     std::cout << "All tests with float passes!" << std::endl;
-
     return 0;
 }

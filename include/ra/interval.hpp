@@ -106,7 +106,7 @@ class interval{
       else
       {
         ++stats_.indeterminate_result_count;
-        throw (indeterminate_result);
+        throw indeterminate_result("Could not determine the sign");
       }
     }
 
@@ -133,8 +133,9 @@ class interval{
     {
       auto min = mins[0];
 
-      for(auto elem : mins)
+      for(int i = 1; i < 4; ++i)
       {
+        auto elem = mins[i];
         if(elem < min)
         {
           min = elem;
@@ -147,8 +148,9 @@ class interval{
     {
       auto max = maxs[0];
 
-      for(auto elem : maxs)
+      for(int i = 1; i < 4; ++i)
       {
+        auto elem = maxs[i];
         if(elem > max)
         {
           max = elem;
@@ -198,7 +200,7 @@ class interval{
     }
     else
     {
-      throw (indeterminate_result);
+      throw indeterminate_result("Could not determine the interval");
     }
   }
 
