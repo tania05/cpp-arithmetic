@@ -25,8 +25,7 @@ class interval{
       unsigned long arithmetic_op_count ;
     };
 
-    static statistics stats_;
-  
+
     interval(real_type real_val = real_type(0)) : lower_bound(real_val), upper_bound(real_val) { }
 
     interval(interval&&) = default;
@@ -51,7 +50,7 @@ class interval{
     {
       lower_bound = lower_bound + other.lower_bound;
       upper_bound = upper_bound + other.upper_bound;
-      ++stats_.arithmetic_op_count;
+      ++(interval<T>::stats_.arithmetic_op_count);
       return *this;
     }
 
@@ -60,7 +59,7 @@ class interval{
     {
       lower_bound = lower_bound - other.upper_bound;
       upper_bound = upper_bound - other.lower_bound;
-      ++stats_.arithmetic_op_count;
+      ++(interval<T>::stats_.arithmetic_op_count);
       return *this;
     }
 
@@ -71,7 +70,7 @@ class interval{
       const real_type arr [] = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};      
       lower_bound = get_min(arr);
       upper_bound = get_max(arr);
-      ++stats_.arithmetic_op_count;
+      ++(interval<T>::stats_.arithmetic_op_count);
       return *this;
     }
 
@@ -106,26 +105,28 @@ class interval{
       }
       else
       {
-        ++stats_.indeterminate_result_count;
+        ++(interval<T>::stats_.indeterminate_result_count);
         throw indeterminate_result("Could not determine the sign");
       }
     }
 
     static void clear_statistics()
     {
-      stats_.indeterminate_result_count = 0;
-      stats_.arithmetic_op_count = 0;
+      interval<T>::stats_.indeterminate_result_count = 0;
+      interval<T>::stats_.arithmetic_op_count = 0;
     }
 
     static void get_statistics(statistics& stats)
     {
-      stats.indeterminate_result_count = stats_.indeterminate_result_count;
-      stats.arithmetic_op_count = stats_.arithmetic_op_count;
+      stats.indeterminate_result_count = interval<T>::stats_.indeterminate_result_count;
+      stats.arithmetic_op_count = interval<T>::stats_.arithmetic_op_count;
     }
 
   private:
     real_type lower_bound;
     real_type upper_bound;
+
+    static statistics stats_;
     
     real_type get_min(const real_type * mins)
     {
