@@ -2,15 +2,29 @@
 #define interval_hpp
 
 #include <iostream>
+#include <string>
 
 namespace ra::math {
+
+
+struct indeterminate_result : public std::runtime_error
+{
+  using std::runtime_error::runtime_error;
+};
+
 
 template <class T>
 class interval{
   public:
     using real_type = T;
 
-    struct statistics statistics;
+    struct statistics {
+      // The total number of indeterminate results encountered.
+      unsigned long indeterminate_result_count ;
+      // The total number of interval arithmetic operations.
+      unsigned long arithmetic_op_count ;
+    };
+
 
     interval(real_type real_val = real_type(0)) : lower_bound(real_val), upper_bound(real_val) { }
 
@@ -36,7 +50,7 @@ class interval{
     {
       lower_bound = lower_bound + other.lower_bound;
       upper_bound = upper_bound + other.upper_bound;
-      ++statistics.arithmetic_op_count;
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -45,7 +59,7 @@ class interval{
     {
       lower_bound = lower_bound - other.upper_bound;
       upper_bound = upper_bound - other.lower_bound;
-      ++statistics.arithmetic_op_count;
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -53,10 +67,10 @@ class interval{
     //remember to check what happens if we operate on itself
     interval& operator*=(const interval& other)
     { 
-      const real_type [] arr = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};      
+      const real_type arr [] = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};      
       lower_bound = get_min(arr);
-      upper_bound = get_max(tmp);
-      ++statistics.arithmetic_op_count;
+      upper_bound = get_max(arr);
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -91,26 +105,29 @@ class interval{
       }
       else
       {
-        ++statistics.indeterminate_result_count;
-        throw indeterminate_result("Sign contains range that's not trickly negative, positive or zero");
+        ++stats_.indeterminate_result_count;
+        throw indeterminate_result();
       }
     }
 
     static void clear_statistics()
     {
-      statistics.indeterminate_result_count = 0;
-      statistics.arithmetic_op_count = 0;
+      stats_.indeterminate_result_count = 0;
+      stats_.arithmetic_op_count = 0;
     }
 
     static void get_statistics(statistics& stats)
     {
-      stats.indeterminate_result_count = statistics.indeterminate_result_count;
-      stats.arithmetic_op_count = statistics.arithmetic_op_count;
+      stats.indeterminate_result_count = stats_.indeterminate_result_count;
+      stats.arithmetic_op_count = stats_.arithmetic_op_count;
     }
 
   private:
     real_type lower_bound;
     real_type upper_bound;
+
+    static statistics stats_;
+    
     
     real_type get_min(const real_type * mins)
     {
@@ -128,7 +145,6 @@ class interval{
 
     real_type get_max(const real_type * maxs)
     {
-      real_type [] maxs = {a1*b1, a1*b2, a2*b1, a2*b2};
       auto max = maxs[0];
 
       for(auto elem : maxs)
@@ -140,18 +156,6 @@ class interval{
       }
       return max;
     }
-
-    struct indeterminate_result : public std::runtime_error
-    {
-      using std::runtime_error::runtime_error;
-    };
-
-    struct statistics {
-      // The total number of indeterminate results encountered.
-      unsigned long indeterminate_result_count ;
-      // The total number of interval arithmetic operations.
-      unsigned long arithmetic_op_count ;
-    };
 };
 
   template<typename T>
@@ -194,23 +198,23 @@ class interval{
     }
     else
     {
-      throw indeterminate_result("First interval is not strictly less than or greater than or euqal to the second iterval");
+      throw indeterminate_result();
     }
   }
 
-  template <typename T> 
-  string tostring(const T& number)
-  {
-    std::ostringstream os;
-    os << number;
-    return os.str();
-  }
+  // template <typename T> 
+  // std::string tostring(const T& number)
+  // {
+  //   std::ostringstream os;
+  //   os << number;
+  //   return os.str();
+  // }
   
   //stream inserter
   template<typename T>
   std::ostream& operator<<(std::ostream& os, const interval<T>& i)
   {
-      os << "[" << tostring(i.lower_bound) << "," << tostring(i.upper_bound) << "]";
+      os << "[" << std::to_string(i.lower_bound) << "," << std::to_string(i.upper_bound) << "]";
       return os;
   }
 }
