@@ -3,11 +3,41 @@
 
 #include <iostream>
 #include <string>
+#include <cfenv>
 
 namespace ra
 {
 namespace math {
 
+class rounding_mode_saver {
+    public:
+    // Save the rounding mode.
+    rounding_mode_saver () {}
+    // Restore the rounding mode to the value that was saved at
+    // the time of construction.
+    ~rounding_mode_saver ()
+    {
+      if (std::fesetround(old_mode)) {abort();}
+    }
+    // The type is neither movable nor copyable.
+    
+    void round_down()
+    {
+      if (std::fesetround(FE_DOWNWARD)) {abort();}
+    }
+
+    void round_up()
+    {
+      if (std::fesetround(FE_UPWARD)) {abort();}      
+    }
+    rounding_mode_saver ( rounding_mode_saver &&) = delete;
+    rounding_mode_saver (const rounding_mode_saver &) = delete;
+    rounding_mode_saver & operator=( rounding_mode_saver &&) = delete;
+    rounding_mode_saver & operator=(const rounding_mode_saver &) = delete;
+
+    private:
+    int old_mode = std::fegetround();
+};
 
 struct indeterminate_result : public std::runtime_error
 {
@@ -56,7 +86,12 @@ class interval{
 
     interval& operator+=(const interval& other)
     { 
+      rounding_mode_saver rms;
+
+      rms.round_down();
       lower_bound = lower_bound + other.lower_bound;
+      
+      rms.round_up();      
       upper_bound = upper_bound + other.upper_bound;
       ++stats_.arithmetic_op_count;
       return *this;
@@ -67,7 +102,13 @@ class interval{
     interval& operator-=(const interval& other)
     {
       auto tmp = other.lower_bound;
+      rounding_mode_saver rms;
+
+      rms.round_down();
+
       lower_bound = lower_bound - other.upper_bound;
+
+      rms.round_up();
       upper_bound = upper_bound - tmp;
       ++stats_.arithmetic_op_count;
       return *this;
@@ -77,9 +118,18 @@ class interval{
     //remember to check what happens if we operate on itself
     interval& operator*=(const interval& other)
     { 
-      const real_type arr [] = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};      
-      lower_bound = get_min(arr);
-      upper_bound = get_max(arr);
+      rounding_mode_saver rms;
+
+      rms.round_down();
+      const real_type arr1 [] = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};      
+      
+      rms.round_up();
+      const real_type arr2 [] = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};            
+      
+      
+      lower_bound = get_min(arr1);
+
+      upper_bound = get_max(arr2);
       ++stats_.arithmetic_op_count;
       return *this;
     }
