@@ -74,22 +74,22 @@ class interval{
       return *this;
     }
 
-    real_type lower()
+    real_type lower() const
     {
       return lower_bound;
     }
 
-    real_type upper()
+    real_type upper() const
     {
       return upper_bound;
     }
 
-    bool is_singleton()
+    bool is_singleton() const
     {
       return lower_bound == upper_bound;
     }
 
-    int sign()
+    int sign() const
     {
       if (lower_bound < 0 && upper_bound < 0)
       {
