@@ -4,7 +4,9 @@
 #include <iostream>
 #include <string>
 
-namespace ra::math {
+namespace ra
+{
+namespace math {
 
 
 struct indeterminate_result : public std::runtime_error
@@ -50,7 +52,7 @@ class interval{
     {
       lower_bound = lower_bound + other.lower_bound;
       upper_bound = upper_bound + other.upper_bound;
-      ++(interval<T>::stats_.arithmetic_op_count);
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -59,7 +61,7 @@ class interval{
     {
       lower_bound = lower_bound - other.upper_bound;
       upper_bound = upper_bound - other.lower_bound;
-      ++(interval<T>::stats_.arithmetic_op_count);
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -70,7 +72,7 @@ class interval{
       const real_type arr [] = {lower_bound*other.lower_bound, lower_bound*other.upper_bound, upper_bound*other.lower_bound, upper_bound*other.upper_bound};      
       lower_bound = get_min(arr);
       upper_bound = get_max(arr);
-      ++(interval<T>::stats_.arithmetic_op_count);
+      ++stats_.arithmetic_op_count;
       return *this;
     }
 
@@ -105,21 +107,21 @@ class interval{
       }
       else
       {
-        ++(interval<T>::stats_.indeterminate_result_count);
+        ++stats_.indeterminate_result_count;
         throw indeterminate_result("Could not determine the sign");
       }
     }
 
     static void clear_statistics()
     {
-      interval<T>::stats_.indeterminate_result_count = 0;
-      interval<T>::stats_.arithmetic_op_count = 0;
+      stats_.indeterminate_result_count = 0;
+      stats_.arithmetic_op_count = 0;
     }
 
     static void get_statistics(statistics& stats)
     {
-      stats.indeterminate_result_count = interval<T>::stats_.indeterminate_result_count;
-      stats.arithmetic_op_count = interval<T>::stats_.arithmetic_op_count;
+      stats.indeterminate_result_count = stats_.indeterminate_result_count;
+      stats.arithmetic_op_count = stats_.arithmetic_op_count;
     }
 
   private:
@@ -219,5 +221,5 @@ class interval{
       return os;
   }
 }
-
+}
 #endif
