@@ -14,18 +14,24 @@ struct indeterminate_result : public std::runtime_error
   using std::runtime_error::runtime_error;
 };
 
+struct statistics {
+	// The total number of indeterminate results encountered.
+	unsigned long indeterminate_result_count;
+	// The total number of interval arithmetic operations.
+	unsigned long arithmetic_op_count;
+};
 
 template <class T>
 class interval{
   public:
     using real_type = T;
 
-    struct statistics {
-      // The total number of indeterminate results encountered.
-      unsigned long indeterminate_result_count ;
-      // The total number of interval arithmetic operations.
-      unsigned long arithmetic_op_count ;
-    };
+    // struct statistics {
+    //   // The total number of indeterminate results encountered.
+    //   unsigned long indeterminate_result_count ;
+    //   // The total number of interval arithmetic operations.
+    //   unsigned long arithmetic_op_count ;
+    // };
 
 
     interval(real_type real_val = real_type(0)) : lower_bound(real_val), upper_bound(real_val) { }
@@ -128,7 +134,7 @@ class interval{
     real_type lower_bound;
     real_type upper_bound;
 
-    static statistics stats_ = {0,0};
+    static statistics stats_;
     
     real_type get_min(const real_type * mins)
     {
@@ -160,6 +166,9 @@ class interval{
       return max;
     }
 };
+
+  template<typename T>
+  statistics interval<T>::stats_;
 
   template<typename T>
   interval<T> operator+(const interval<T>& a, const interval<T>& b)
