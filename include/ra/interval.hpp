@@ -188,11 +188,11 @@ class interval{
   template<typename T>
   interval<T> operator<(const interval<T>&a, const interval<T>& b)
   {
-    if (a.lower_bound < b.lower_bound && a.upper_bound < b.upper_bound)
+    if (a.lower() < b.lower() && a.upper() < b.upper())
     {
       return true;
     }
-    else if (a.lower_bound >= b.lower_bound && a.upper_bound >= b.upper_bound)
+    else if (a.lower() >= b.lower() && a.upper() >= b.upper())
     {
       return false;
     }
@@ -214,7 +214,7 @@ class interval{
   template<typename T>
   std::ostream& operator<<(std::ostream& os, const interval<T>& i)
   {
-      os << "[" << std::to_string(i.lower_bound) << "," << std::to_string(i.upper_bound) << "]";
+      os << "[" << std::to_string(i.lower()) << "," << std::to_string(i.upper()) << "]";
       return os;
   }
 }
