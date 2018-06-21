@@ -217,6 +217,9 @@ class interval{
       }
       return max;
     }
+
+    template <typename R>
+    friend bool operator<(const interval<R>&a, const interval<R>& b);
 };
 
   template<typename T>
@@ -262,6 +265,7 @@ class interval{
     }
     else
     {
+      ++interval<T>::stats_.indeterminate_result_count;
       throw indeterminate_result("Could not determine the interval");
     }
   }

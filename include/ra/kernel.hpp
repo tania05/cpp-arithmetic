@@ -184,9 +184,25 @@ class Kernel
       return val == 1;
     }
     // Clear (i.e., set to zero) all kernel statistics.
-    static void clear_statistics ();
+    static void clear_statistics ()
+    {
+      stats_.orientation_total_count = 0;
+      stats_.orientation_exact_count = 0;
+      stats_.preferred_direction_total_count = 0;
+      stats_.preferred_direction_exact_count = 0;
+      stats_.side_of_oriented_circle_total_count = 0;
+      stats_.side_of_oriented_circle_exact_count = 0;
+    }
     // Get the current values of the kernel statistics.
-    static void get_statistics ( Statistics & statistics );
+    static void get_statistics ( Statistics & statistics )
+    {
+      stats_.orientation_total_count = 0;
+      stats_.orientation_exact_count = 0;
+      stats_.preferred_direction_total_count = 0;
+      stats_.preferred_direction_exact_count = 0;
+      stats_.side_of_oriented_circle_total_count = 0;
+      stats_.side_of_oriented_circle_exact_count = 0;
+    }
 
     private:
     static Statistics stats_;
@@ -317,7 +333,7 @@ class Kernel
 
 };
     template<typename T>
-    typename Kernel<T>::Statistics Kernel<T>::stats_ = {0,0};
+    typename Kernel<T>::Statistics Kernel<T>::stats_ = {0,0,0,0,0,0};
 }
 
 #endif
