@@ -5,7 +5,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>
 
-namespace ra :: geometry {
+namespace ra::geometry{
 
 using namespace ra::math;
 
@@ -54,15 +54,15 @@ class Kernel
     };
     // Since a kernel object is stateless, construction and
     // destruction are trivial.
-    Kernel ();
-    ~Kernel ();
+    Kernel() {}
+    ~Kernel() = default;
     // The kernel type is both movable and copyable.
     // Since a kernel object is stateless, a copy/move operation
     // is trivial.
-    Kernel (const Kernel &);
-    Kernel & operator=(const Kernel &);
-    Kernel ( Kernel &&);
-    Kernel & operator=( Kernel &&);
+    Kernel(const Kernel&) = default;
+    Kernel& operator=(const Kernel&) = default;
+    Kernel (Kernel&&) = default;
+    Kernel& operator=(Kernel&&)= default;
     // Determines how the point c is positioned relative to the
     // directed line through the points a and b (in that order).
     // Precondition: The points a and b have distinct values.
@@ -94,6 +94,7 @@ class Kernel
       }
       catch(indeterminate_result& e)
       {
+        // std::cout << "Youa re here" << std::endl;
         ++(stats_.side_of_oriented_circle_exact_count);
         return circle_side_calc<CGAL::MP_Float>(a,b,c,d);
       }
@@ -196,12 +197,12 @@ class Kernel
     // Get the current values of the kernel statistics.
     static void get_statistics ( Statistics & statistics )
     {
-      stats_.orientation_total_count = 0;
-      stats_.orientation_exact_count = 0;
-      stats_.preferred_direction_total_count = 0;
-      stats_.preferred_direction_exact_count = 0;
-      stats_.side_of_oriented_circle_total_count = 0;
-      stats_.side_of_oriented_circle_exact_count = 0;
+      statistics.orientation_total_count = stats_.orientation_total_count;
+      statistics.orientation_exact_count = stats_.orientation_exact_count;
+      statistics.preferred_direction_total_count = stats_.preferred_direction_total_count;
+      statistics.preferred_direction_exact_count = stats_.preferred_direction_exact_count;
+      statistics.side_of_oriented_circle_total_count = stats_.side_of_oriented_circle_total_count;
+      statistics.side_of_oriented_circle_exact_count = stats_.side_of_oriented_circle_exact_count;
     }
 
     private:
@@ -222,7 +223,7 @@ class Kernel
       T third(ya - yc);
       T fourth(yb - yc);
 
-      T det = (first * fourth) - (second - third);
+      T det = (first * fourth) - (second * third);
       return convert_orientation(det.sign());
       
     }
@@ -259,35 +260,6 @@ class Kernel
       }
     }
 
-    template<class T>
-    Oriented_side circle_side_calc(const Point &a, const Point &b, const Point &c, const Point& d)
-    {
-      T a_(make_3d_point(a));
-      T b_(make_3d_point(b));
-      T c_(make_3d_point(c));
-      T d_(make_3d_point(d));
-
-      T e1(a_.x() - d_.x());
-      T e2(b_.x() - d_.x());     
-      T e3(c_.x() - d_.x());
-      T e4(a_.y() - d_.y());
-      T e5(b_.y() - d_.y());
-      T e6(c_.y() - d_.y());
-      T e7(a_.z() - d_.z());
-      T e8(b_.z() - d_.z());
-      T e9(c_.z() - d_.z());
-
-      T det = determinants_3d(e1,e2,e3,e4,e5,e6,e7,e8,e9);
-      return convert_oriented_side(det.sign());
-    }
-
-    template <class T>
-    T determinants_3d(T a, T b, T c, T d, T e, T f,T g,T h,T i)
-    {
-      T det = a*(e*i - f*h) - b*(d*i - f*g) + c*(d*h - e*g);
-      return det;
-    }
-
     template <class T>
     typename CGAL::Cartesian<T>::Point_3 make_3d_point(const Point& pt)
     {
@@ -298,16 +270,43 @@ class Kernel
       return p;
     }
 
-    template <class T>
-    Point distance_sqrt(const Point &a, const Point& b)
+    template<class T>
+    Oriented_side circle_side_calc(const Point &a, const Point &b, const Point &c, const Point& d)
     {
-      T x(a.x() - b.x());
-      T y(a.y() - b.y());
-      return CGAL::Cartesian<T>::Point_2(x,y);
+      auto aa  = make_3d_point<T>(a);
+      auto bb =  make_3d_point<T>(b);
+      auto cc =  make_3d_point<T>(c);
+      auto dd =  make_3d_point<T>(d);
+
+      T e1(aa.x() - dd.x());
+      T e2(bb.x() - dd.x());     
+      T e3(cc.x() - dd.x());
+      T e4(aa.y() - dd.y());
+      T e5(bb.y() - dd.y());
+      T e6(cc.y() - dd.y());
+      T e7(aa.z() - dd.z());
+      T e8(bb.z() - dd.z());
+      T e9(cc.z() - dd.z());
+
+      T det = determinants_3d(e1,e2,e3,e4,e5,e6,e7,e8,e9);
+      std::cout << det << std::endl;
+      std::cout << "****************" << std::endl;
+      return convert_oriented_side(det.sign());
     }
 
     template <class T>
-    T sqr(const Point a)
+    T determinants_3d(T a, T b, T c, T d, T e, T f,T g,T h,T i)
+    {
+      T det = a*(e*i - f*h) - b*(d*i - f*g) + c*(d*h - e*g);
+      return det;
+    }
+
+    
+
+    
+
+    template <class T>
+    T sqr(const typename CGAL::Cartesian<T>::Point_2 a)
     {
       T x(a.x());
       T y(a.y());
@@ -316,18 +315,34 @@ class Kernel
     }
 
     template <class T>
+    typename CGAL::Cartesian<T>::Point_2 distance_sqrt(const Point &a, const Point& b)
+    {
+      T x(a.x() - b.x());
+      T y(a.y() - b.y());
+      typename CGAL::Cartesian<T>::Point_2 pt(x,y);
+      return pt;
+    }
+
+    template <class T>
     int preferred_dir(const Point & a , const Point & b , const Point & c , const Point & d , const Vector & v )
     {
-      Point b_a = distance_sqrt(b,a);
-      Point b_c = distance_sqrt(b,c);
+      auto b_a = distance_sqrt<T>(b,a);
+      auto d_c = distance_sqrt<T>(d,c);
 
-      T d_c_2 = sqr(b_c); 
-      T b_a_2 = sqr(b_a);
+      T d_c_2 = sqr<T>(d_c); 
+      T b_a_2 = sqr<T>(b_a);
 
-      T b_a_v = (b_a.x() * v.x()) + (b_a.y() * v.y());
-      T b_c_v = (b_c.x() * v.x()) + (b_c.y() * v.y());
+      T b_a_x = b_a.x();
+      T b_a_y = b_a.y();
+      T d_c_x = d_c.x();
+      T d_c_y = d_c.y();
+      T v_x = v.x();
+      T v_y = v.y();
 
-      T dir = d_c_2*(b_a_v * b_a_v) - b_a_2(b_c_v*b_c_v);
+      T b_a_v = (b_a_x * v_x) + (b_a_y * v_y);
+      T d_c_v = (d_c_x * v_x) + (d_c_y * v_y);
+            
+      T dir = d_c_2*(b_a_v * b_a_v) - b_a_2*(d_c_v*d_c_v);
       return dir.sign();
     }
 

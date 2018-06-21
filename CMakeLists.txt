@@ -4,6 +4,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 project(cpp_compile_time LANGUAGES CXX)
 
+if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
+	add_compile_options("-frounding-math")
+endif()
+
 add_executable(test_interval app/test_interval.cpp include/ra/interval.hpp)
 add_executable(test_kernel app/test_kernel.cpp include/ra/kernel.hpp)
 #add_executable(delaunay_triangulation app/delaunay_triangulation.cpp app/triangulation_2.hpp)
