@@ -6,6 +6,7 @@
 using namespace ra::math;
 using namespace std;
 
+
 template <class T>
 void constructor_tests()
 {
@@ -127,6 +128,9 @@ void multiply()
   //multiplied by itself
   interval<T> self(2.0, 3.0);
   self *= self;
+  cout << self.lower() << endl;
+  cout << self.upper() << endl;
+
   assert(self.lower() == T(4.0));
   assert(self.upper() == T(9.0));
 
@@ -141,6 +145,7 @@ void multiply()
   assert(z2.lower() == T(1));
   assert(z2.upper() == T(4));  
 }
+
 
 template <class T>
 void compound_operators()
