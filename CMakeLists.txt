@@ -2,7 +2,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
-project(cpp_compile_time LANGUAGES CXX)
+project(cpp_arithmetic LANGUAGES CXX)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
 	add_compile_options("-frounding-math")
@@ -10,7 +10,7 @@ endif()
 
 add_executable(test_interval app/test_interval.cpp include/ra/interval.hpp)
 add_executable(test_kernel app/test_kernel.cpp include/ra/kernel.hpp)
-#add_executable(delaunay_triangulation app/delaunay_triangulation.cpp app/triangulation_2.hpp)
+add_executable(delaunay_triangulation app/delaunay_triangulation.cpp)
 
 
 find_package(CGAL REQUIRED COMPONENTS)
@@ -23,10 +23,8 @@ target_include_directories(test_interval PUBLIC include "${CMAKE_CURRENT_BINARY_
 target_link_libraries(test_kernel ${kernel_dependencies})
 target_include_directories(test_kernel PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/include")
 
-#target_include_directories(delaunay_triangulation PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/include")
-
-
-#target_link_libraries(delaunay_triangulation PUBLIC ${CGAL_LIBRARIES})
+target_include_directories(delaunay_triangulation PUBLIC include ${CGAL_INCLUDE_DIRS})
+target_link_libraries(delaunay_triangulation ${CGAL_LIBRARY} ${GMP_LIBRARIES})
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frounding-math")
 
