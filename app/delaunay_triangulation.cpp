@@ -13,12 +13,6 @@ using Suspect_Map = std::map<Triangulation::Halfedge_const_handle, int>;
 
 Suspect_Map suspects;
 
-template <class T>
-void lop()
-{
-    std::cout<< "You are here" << std::endl;
-}
-
 bool is_flippable(Triangulation::Halfedge_const_handle halfedge)
 {
   return !(halfedge->is_border() || halfedge->opposite()->is_border());
@@ -70,7 +64,7 @@ bool is_everythig_optimal(Suspect_Map& suspects)
 
 int main(int argc, char** argv)
 {
-  lop<double>();
+  // lop<double>();
   //map to tag the suspects
   Triangulation tri(std::cin);
   Kernel::Vector_2 u(1,0);
@@ -104,31 +98,28 @@ int main(int argc, char** argv)
       Triangulation::Vertex_const_handle b =   
       halfedgeIter->opposite()->vertex();
 
-      // //if not preferred direction localy delauny,
-      // auto pa = halfedgeIter->opposite()->next()->vertex()->point();
-      // auto pb = halfedgeIter->vertex()->point();
-      // auto pc = halfedgeIter->opposite()->vertex()->point();
-      // auto pd = halfedgeIter->next()->vertex()->point();
 
-      
       auto pd = halfedgeIter->opposite()->next()->vertex()->point();
       auto pa = halfedgeIter->vertex()->point();
-      auto pb = halfedgeIter->opposite()->vertex()->point();
-      auto pc = halfedgeIter->next()->vertex()->point();
+      auto pc = halfedgeIter->opposite()->vertex()->point();
+      auto pb = halfedgeIter->next()->vertex()->point();
       
-      if(k.is_locally_pd_delaunay_edge(pa,pb,pc,pd,u,v) && is_flippable(halfedgeIter))
+      if(k.is_locally_pd_delaunay_edge(pa,pb,pc,pd,u,v) && is_flippable(halfedgeIter)) 
       {
-        std::cout << "faces in You are inside:\n";
+        // std::cout << "faces in You are inside:\n";
         
+          // tri.flip_edge(halfedgeIter);
+          suspects[halfedgeIter] = 1;
+          suspects[halfedgeIter->opposite()] = 1;
+          // mark_potential_suspects(tri,halfedgeIter);
+      }
+      else if(is_flippable(halfedgeIter))
+      {
           tri.flip_edge(halfedgeIter);
           suspects[halfedgeIter] = 1;
           suspects[halfedgeIter->opposite()] = 1;
           mark_potential_suspects(tri,halfedgeIter);
-      }
-      else
-      {
-          suspects[halfedgeIter] = 1;
-          suspects[halfedgeIter->opposite()] = 1;                  
+                            
       }
     }
   } 
