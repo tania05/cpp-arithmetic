@@ -343,8 +343,20 @@ void less_than()
   {
   }
 
-  assert(a1 < a2);
-  assert((a1 < a3) == false);
+  try
+  {
+    a1 < a2;
+    assert(false);
+  } catch (ra::math::indeterminate_result& e)
+  {
+  }
+  try
+  {
+    a1 < a3;
+    assert(false);
+  } catch (ra::math::indeterminate_result& e)
+  {
+  }
   assert((a1 < a5) == false);
   cout << "Done less than operator" << endl << endl;  
   

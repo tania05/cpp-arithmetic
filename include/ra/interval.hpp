@@ -255,11 +255,11 @@ class interval{
   template<typename T>
   bool operator<(const interval<T>&a, const interval<T>& b)
   {
-    if (a.lower() < b.lower() && a.upper() < b.upper())
+    if (a.lower() < b.lower() && a.upper() < b.upper() && a.upper() < b.lower() && a.lower() < b.upper())
     {
       return true;
     }
-    else if (a.lower() >= b.lower() && a.upper() >= b.upper())
+    else if (a.lower() >= b.lower() && a.upper() >= b.upper() && a.upper() >= b.lower() && a.lower() >= b.upper())
     {
       return false;
     }
