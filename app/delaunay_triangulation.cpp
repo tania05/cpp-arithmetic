@@ -37,8 +37,8 @@ void mark_potential_suspects(const Triangulation& tri, Triangulation::Halfedge_c
 		Triangulation::Vertex_const_handle a = h->vertex();
 		Triangulation::Vertex_const_handle b = h->opposite()->vertex();
 		Triangulation::Vertex_const_handle c = h->next()->vertex();
-		std::cout << "face " << a->point() << ' ' << b->point() << ' '
-		  << c->point() << '\n';
+		// std::cout << "face " << a->point() << ' ' << b->point() << ' '
+		//   << c->point() << '\n';
 
       if(h == flippedEdge)
       {
