@@ -289,8 +289,8 @@ class Kernel
       T e9(cc.z() - dd.z());
 
       T det = determinants_3d(e1,e2,e3,e4,e5,e6,e7,e8,e9);
-      std::cout << det << std::endl;
-      std::cout << "****************" << std::endl;
+      // std::cout << det << std::endl;
+      // std::cout << "****************" << std::endl;
       return convert_oriented_side(det.sign());
     }
 
@@ -300,10 +300,6 @@ class Kernel
       T det = a*(e*i - f*h) - b*(d*i - f*g) + c*(d*h - e*g);
       return det;
     }
-
-    
-
-    
 
     template <class T>
     T sqr(const typename CGAL::Cartesian<T>::Point_2 a)
